@@ -40,3 +40,4 @@ let outcome = [
 [4,5,6,1,2,3]
 ]
 console.log(outcome[1][3])
+console.log(outcome[4][3])
