@@ -1,30 +1,26 @@
-async function submitForm() {
-    let username = document.getElementById("username").value;
-    let password = document.getElementById("password").value;
 
-    try {
-        let response = await fetch('http://127.0.0.1:3000/signup', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ username, password })
-        });
+let usernameInput = document.querySelector('#username');
+let passwordInput = document.querySelector('#password');
+let welcome = document.querySelector('.welcome');
 
-        if (!response.ok) {
-            throw new Error('Failed to sign up');
-        }
-
-        alert('Sign up successful!');
-        
-        let nameResponse = await fetch('http://127.0.0.1:3000/');
-        if (!nameResponse.ok) {
-            throw new Error('Failed to get name');
-        }
-        let name = await nameResponse.text();
-        document.querySelector('.name').textContent = name;
-    } catch (error) {
-        console.error('Error during signup:', error.message);
-        alert('Failed to sign up. Please try again.');
+const logIn = async () => {
+    let username = usernameInput.value;
+    let password = passwordInput.value;
+    let res = await fetch('http://127.0.0.1:3000/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            username: username,
+            password: password
+        })
+    })
+    // console.log(res);
+    if(!res.ok) {
+        alert('Failed to login');
+        return;
     }
+    let { surname } = await res.json();
+    welcome.textContent = surname;
 }
