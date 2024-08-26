@@ -1,0 +1,24 @@
+import React, { useState } from 'react';
+
+function App() {
+    const [input, setInput] = useState('');
+    const handleClick = (value) => setInput(input + value);
+    const calculate = () => setInput(eval(input));
+    const clear = () => setInput('');
+
+    return (
+        <div>
+            <h1>Calculator</h1>
+            <input type="text" value={input} readOnly />
+            <div>
+                {[1, 2, 3, '+', 4, 5, 6, '-', 7, 8, 9, '*', 0, '/', '=', 'C'].map(item =>
+                    <button key={item} onClick={() => item === '=' ? calculate() : item === 'C' ? clear() : handleClick(item.toString())}>
+                        {item}
+                    </button>
+                )}
+            </div>
+        </div>
+    );
+}
+
+export default App;
