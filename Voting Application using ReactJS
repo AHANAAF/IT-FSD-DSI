@@ -1,0 +1,23 @@
+import React, { useState } from 'react';
+
+function App() {
+    const [votes, setVotes] = useState({ option1: 0, option2: 0 });
+
+    const vote = (option) => {
+        setVotes({ ...votes, [option]: votes[option] + 1 });
+    };
+
+    return (
+        <div>
+            <h1>Vote for Your Favorite Option</h1>
+            <button onClick={() => vote('option1')}>Option 1</button>
+            <button onClick={() => vote('option2')}>Option 2</button>
+            <div>
+                <p>Option 1: {votes.option1} votes</p>
+                <p>Option 2: {votes.option2} votes</p>
+            </div>
+        </div>
+    );
+}
+
+export default App;
