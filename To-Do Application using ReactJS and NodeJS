@@ -1,0 +1,67 @@
+const express = require('express');
+const fs = require('fs');
+const app = express();
+
+app.use(express.json());
+
+app.get('/todos', (req, res) => {
+    fs.readFile('todos.json', 'utf8', (err, data) => {
+        if (err) throw err;
+        res.json(JSON.parse(data));
+    });
+});
+
+app.post('/todos', (req, res) => {
+    fs.writeFile('todos.json', JSON.stringify(req.body), (err) => {
+        if (err) throw err;
+        res.send('To-Do list saved!');
+    });
+});
+
+app.listen(3000, () => console.log('Server started on port 3000'));
+--------------------------------------------------------------------------
+
+import React, { useState, useEffect } from 'react';
+
+function App() {
+    const [todos, setTodos] = useState([]);
+    const [newTodo, setNewTodo] = useState('');
+
+    useEffect(() => {
+        fetch('/todos')
+            .then(res => res.json())
+            .then(data => setTodos(data));
+    }, []);
+
+    const addTodo = () => {
+        setTodos([...todos, newTodo]);
+        setNewTodo('');
+    };
+
+    const saveTodos = () => {
+        fetch('/todos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(todos)
+        }).then(() => alert('To-Do list saved!'));
+    };
+
+    return (
+        <div>
+            <h1>To-Do List</h1>
+            <input 
+                type="text" 
+                value={newTodo} 
+                onChange={(e) => setNewTodo(e.target.value)} 
+                placeholder="Add a new task..." 
+            />
+            <button onClick={addTodo}>Add</button>
+            <button onClick={saveTodos}>Save</button>
+            <ul>
+                {todos.map((todo, index) => <li key={index}>{todo}</li>)}
+            </ul>
+        </div>
+    );
+}
+
+export default App;
