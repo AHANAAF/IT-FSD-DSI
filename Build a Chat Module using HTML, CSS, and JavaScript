@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Module</title>
+    <link rel="stylesheet" href="chat.css">
+</head>
+<body>
+    <div class="chat-container">
+        <div id="chat-box"></div>
+        <input type="text" id="user-input" placeholder="Type a message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    <script src="chat.js"></script>
+</body>
+</html>
+###########################
+.chat-container {
+    width: 300px;
+    margin: 50px auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+    background-color: #f9f9f9;
+}
+
+#chat-box {
+    height: 200px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+    padding: 5px;
+    overflow-y: scroll;
+}
+
+#user-input {
+    width: 200px;
+    padding: 5px;
+}
+#####################################
+function sendMessage() {
+    const chatBox = document.getElementById('chat-box');
+    const userInput = document.getElementById('user-input');
+    const message = userInput.value;
+
+    if (message.trim()) {
+        const newMessage = document.createElement('div');
+        newMessage.textContent = message;
+        chatBox.appendChild(newMessage);
+        userInput.value = '';
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+}
+
+
