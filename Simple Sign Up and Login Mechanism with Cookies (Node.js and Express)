@@ -1,0 +1,63 @@
+npm install express body-parser cookie-parser bcryptjs mongoose
+-------------------------------------------------------------------
+const express = require('express');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const bcrypt = require('bcryptjs');
+const mongoose = require('mongoose');
+const app = express();
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+mongoose.connect('mongodb://localhost:27017/usersDB', { useNewUrlParser: true, useUnifiedTopology: true });
+
+const userSchema = {
+    email: String,
+    password: String
+};
+
+const User = mongoose.model('User', userSchema);
+
+app.post('/signup', (req, res) => {
+    const hashedPassword = bcrypt.hashSync(req.body.password, 10);
+    const newUser = new User({ email: req.body.email, password: hashedPassword });
+    newUser.save().then(() => res.send('User registered!'));
+});
+
+app.post('/login', (req, res) => {
+    User.findOne({ email: req.body.email }, (err, user) => {
+        if (err) res.send(err);
+        if (user && bcrypt.compareSync(req.body.password, user.password)) {
+            res.cookie('user', user.email, { httpOnly: true });
+            res.send('Login successful!');
+        } else {
+            res.send('Invalid credentials!');
+        }
+    });
+});
+
+app.listen(3000, () => console.log('Server started on port 3000'));
+---------------------------------------------------------------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up / Login</title>
+</head>
+<body>
+    <h2>Sign Up</h2>
+    <form action="/signup" method="POST">
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit">Sign Up</button>
+    </form>
+    <h2>Login</h2>
+    <form action="/login" method="POST">
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit">Login</button>
+    </form>
+</body>
+</html>
