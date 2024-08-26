@@ -1,0 +1,72 @@
+
+npm install express mysql body-parser
+--------------------------------------------------------------------
+const express = require('express');
+const mysql = require('mysql');
+const bodyParser = require('body-parser');
+const app = express();
+
+app.use(bodyParser.urlencoded({ extended: true }));
+
+const db = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'eventsDB'
+});
+
+db.connect(err => {
+    if (err) throw err;
+    console.log('MySQL Connected...');
+});
+
+app.post('/addEvent', (req, res) => {
+    const event = { name: req.body.name, date: req.body.date };
+    const sql = 'INSERT INTO events SET ?';
+    db.query(sql, event, (err) => {
+        if (err) throw err;
+        res.send('Event added successfully!');
+    });
+});
+
+app.get('/events', (req, res) => {
+    const sql = 'SELECT * FROM events';
+    db.query(sql, (err, results) => {
+        if (err) throw err;
+        res.send(results);
+    });
+});
+
+app.post('/updateEvent/:id', (req, res) => {
+    const sql = `UPDATE events SET name = '${req.body.name}', date = '${req.body.date}' WHERE id = ${req.params.id}`;
+    db.query(sql, (err) => {
+        if (err) throw err;
+        res.send('Event updated successfully!');
+    });
+});
+
+app.post('/deleteEvent/:id', (req, res) => {
+    const sql = `DELETE FROM events WHERE id = ${req.params.id}`;
+    db.query(sql, (err) => {
+        if (err) throw err;
+        res.send('Event deleted successfully!');
+    });
+});
+
+app.listen(3000, () => console.log('Server started on port 3000'));
+-------------------------------------------------------------------------------------------------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Form</title>
+</head>
+<body>
+    <form action="/addEvent" method="POST">
+        <input type="text" name="name" placeholder="Event Name" required>
+        <input type="date" name="date" placeholder="Date" required>
+        <button type="submit">Add Event</button>
+    </form>
+</body>
+</html>
